@@ -14,10 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.pinmedia.connectlab.databinding.ActivityMainBinding
-import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
-
 
 class MainActivity : AppCompatActivity(), PodcastClickListener {
 
@@ -52,6 +49,10 @@ class MainActivity : AppCompatActivity(), PodcastClickListener {
             openActivityForResult(intent)
         }
 
+        binding.imgClose.setOnClickListener {
+            onBackPressed()
+        }
+
     }
 
     private var resultLauncher =
@@ -62,14 +63,13 @@ class MainActivity : AppCompatActivity(), PodcastClickListener {
                 val uri = result.data?.data
 
                 try {
-                    var displayName = "Audio"
 
                     returnCursor = contentResolver.query(uri!!, null, null, null, null)
 
                     val nameIndex: Int =
                         returnCursor?.getColumnIndex(OpenableColumns.DISPLAY_NAME)!!
                     returnCursor.moveToFirst()
-                    displayName = returnCursor.getString(nameIndex)
+                    val displayName = returnCursor.getString(nameIndex)
 
                     val duration = getDuration(uri)
 
@@ -118,7 +118,6 @@ class MainActivity : AppCompatActivity(), PodcastClickListener {
 
     private fun formatMilliSecond(milliseconds: Long): String {
         var finalTimerString = ""
-        var secondsString = ""
 
         val hours = (milliseconds / (1000 * 60 * 60)).toInt()
         val minutes = (milliseconds % (1000 * 60 * 60)).toInt() / (1000 * 60)
@@ -128,7 +127,7 @@ class MainActivity : AppCompatActivity(), PodcastClickListener {
             finalTimerString = "$hours:"
         }
 
-        secondsString = if (seconds < 10) {
+        val secondsString = if (seconds < 10) {
             "0$seconds"
         } else {
             "" + seconds
